@@ -1,0 +1,70 @@
+<form class="splunk-formatter-section" section-label="General">
+
+        <splunk-control-group label="Layout" help="">
+                <splunk-radio-input name="{{VIZ_NAMESPACE}}.layout" value="horizontal">
+                        <option value="horizontal">Horizontal</option>
+                        <option value="vertical">Vertical</option>
+                        <option value="radial">Radial</option>
+                </splunk-radio-input>
+        </splunk-control-group>
+
+        <splunk-control-group label="Leaf nodes" help="">
+                <splunk-radio-input name="{{VIZ_NAMESPACE}}.tidy" value="yes">
+                        <option value="yes">Tidy tree</option>
+                        <option value="no">Justified</option>
+                </splunk-radio-input>
+        </splunk-control-group>
+
+        <splunk-control-group label="Allow pan and zoom" help="">
+                <splunk-radio-input name="{{VIZ_NAMESPACE}}.zoom" value="yes">
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                </splunk-radio-input>
+        </splunk-control-group>
+
+
+        <splunk-control-group label="Label size" help="">
+                <splunk-text-input name="{{VIZ_NAMESPACE}}.label_size" value="10" style="width:64px; vertical-align:top; display:inline-block; flex:none; margin-right:4px;"></splunk-text-input>
+        </splunk-control-group> 
+        
+        <splunk-control-group label="Node size" help="">
+                <splunk-text-input name="{{VIZ_NAMESPACE}}.node_size" value="4" style="width:64px; vertical-align:top; display:inline-block; flex:none; margin-right:4px;"></splunk-text-input>
+        </splunk-control-group>
+
+        <splunk-control-group label="Sibling spacing" help="">
+                <splunk-text-input name="{{VIZ_NAMESPACE}}.node_sibling_spacing" value="30" style="width:64px; vertical-align:top; display:inline-block; flex:none; margin-right:4px;"></splunk-text-input>
+        </splunk-control-group> 
+
+        <splunk-control-group label="Ancestor spacing" help="">
+                <splunk-text-input name="{{VIZ_NAMESPACE}}.node_ancestor_spacing" value="100" style="width:64px; vertical-align:top; display:inline-block; flex:none; margin-right:4px;"></splunk-text-input>
+        </splunk-control-group> 
+
+        <splunk-control-group label="Radial radius" help="">
+                <splunk-text-input name="{{VIZ_NAMESPACE}}.radius" value="300" style="width:64px; vertical-align:top; display:inline-block; flex:none; margin-right:4px;"></splunk-text-input>
+        </splunk-control-group>
+
+        <splunk-control-group label="Path delimiter" help="">
+                <splunk-text-input name="{{VIZ_NAMESPACE}}.delimiter" value="/" ></splunk-text-input>
+        </splunk-control-group>
+
+        <splunk-control-group label="Root node label" help="">
+                <splunk-text-input name="{{VIZ_NAMESPACE}}.root" value="" ></splunk-text-input>
+        </splunk-control-group>
+
+        <splunk-control-group label="Max rows" help="">
+                <splunk-text-input name="{{VIZ_NAMESPACE}}.max_rows" value="1000" style="width:64px; vertical-align:top; display:inline-block; flex:none; margin-right:4px;"></splunk-text-input>
+        </splunk-control-group> 
+
+</form>
+
+<form class="splunk-formatter-section" section-label="Help">
+        <splunk-control-group label=" " help="">
+                <div style="margin:20px 10px 10px -90px">
+                        <div>Data should contain columns with specific names.</div>
+                        <div style="margin-top:10px;"><code>path</code> <code>color</code> <code>tooltip</code> <code>drilldown</code></div>
+
+                        <div style="margin-top:30px;"><a href="/app/dendrogram_viz/documentation" target="_blank">Examples and Documentation</a></div>
+                        <div style="margin-top:40px;">By Chris Younger - <a href="https://splunkbase.splunk.com/apps/#/author/chrisyoungerjds" target="_blank">My other apps</a></div>
+                </div> 
+        </splunk-control-group>
+</form>
