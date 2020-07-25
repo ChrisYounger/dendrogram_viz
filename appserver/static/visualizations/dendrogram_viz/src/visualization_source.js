@@ -6,6 +6,7 @@
 // Graceful updating?
 
 // References
+// An excellent explaination walk-through of d3 https://bl.ocks.org/denjn5/e1cdbbe586ac31747b4a304f8f86efa5
 // https://observablehq.com/@d3/radial-dendrogram
 // https://observablehq.com/@d3/cluster-dendrogram
 // https://observablehq.com/@d3/tidy-tree
@@ -25,7 +26,6 @@ function(
     vizUtils,
     d3
 ) {
-    // An excellent explaination walk-through of d3 https://bl.ocks.org/denjn5/e1cdbbe586ac31747b4a304f8f86efa5
 
     var vizObj = {
         initialize: function() {
@@ -82,17 +82,17 @@ function(
             }, 300);
         },
 
-        getColor: function(elements) {
-            var viz = this;
-            if (viz.config.color.substr(0,1) === "s") {
-                return d3.scaleOrdinal(d3[viz.config.color]);
-            } else {
-                var c = d3.scaleOrdinal(d3.quantize(d3[viz.config.color], Math.round((elements + 1) * 1.25)));
-                // waste a bunch of colors, the first third are too dim to see
-                for (var i = 0; i <= Math.round((elements + 1) * 0.2); i++) { c("dendrogram_viz_" + i); }
-                return c;
-            }
-        },
+        // getColor: function(elements) {
+        //     var viz = this;
+        //     if (viz.config.color.substr(0,1) === "s") {
+        //         return d3.scaleOrdinal(d3[viz.config.color]);
+        //     } else {
+        //         var c = d3.scaleOrdinal(d3.quantize(d3[viz.config.color], Math.round((elements + 1) * 1.25)));
+        //         // waste a bunch of colors, the first third are too dim to see
+        //         for (var i = 0; i <= Math.round((elements + 1) * 0.2); i++) { c("dendrogram_viz_" + i); }
+        //         return c;
+        //     }
+        // },
         doDraw: function(){
             var viz = this;
             // Dont draw unless this is a real element under body
@@ -123,7 +123,6 @@ function(
             var validRows = 0;
             var data = {"name": viz.config.root, "children": []};
             var drilldown, i, k;
-            console.log(viz.data);
             for (i = 0; i < viz.data.results.length; i++) {
                 if (! viz.data.results[i].path) {
                     skippedRows++;
@@ -202,9 +201,6 @@ function(
                 viz.$container_wrap.empty().append("<div class='dendrogram_viz-bad_data'>Too many rows of data. Increase limit in formatting settings (Total rows:" + validRows + ", Limit: " + viz.config.max_rows + "). </div>");
                 return;
             }
-            var svg;
-            var labelsize = Number(viz.config.labelsize) / 100 * 16;
-
 
             // function tooltipCreate(d) {
             //     var parts = d.ancestors().map(function(d) { return d.data.name; }).reverse();
@@ -239,10 +235,9 @@ function(
 
             var width = viz.$container_wrap.width() - 20;
             var height = viz.$container_wrap.height() - 20;
-            svg = d3.create("svg")
+            var svg = d3.create("svg")
                 .style("font", Number(viz.config.label_size) + "px sans-serif")
                 .style("box-sizing", "border-box");
-                console.log("Wtf", svg);
             var svg_canvas = svg.append("g").attr("class", "zoomwrap");
 
             var dataInHierarchy = d3.hierarchy(data).sort(function(a, b) {
@@ -258,8 +253,8 @@ function(
                 }
             } else {
                 if (viz.config.layout !== "radial"){
-                    dataInHierarchy.dx = viz.config.node_sibling_spacing; //Number(viz.config.node_size) * 2; // horizon
-                    dataInHierarchy.dy = viz.config.node_ancestor_spacing; //width / (root.height + 1); //vertical
+                    dataInHierarchy.dx = viz.config.node_sibling_spacing;
+                    dataInHierarchy.dy = viz.config.node_ancestor_spacing;
                     root = d3.cluster().nodeSize([
                         dataInHierarchy.dx,  // width
                         dataInHierarchy.dy   // height
@@ -373,7 +368,6 @@ function(
             document.body.appendChild(svg_node);
             var bbox = svg_node.getBBox();
             document.body.removeChild(svg_node);
-            console.log("viewBox", [bbox.x, bbox.y, bbox.width, bbox.height]);
             svg.attr("viewBox", [bbox.x, bbox.y, bbox.width, bbox.height]);
 
             svg.attr("width", (width - 20) + "px").attr("height", (height - 20) + "px");
