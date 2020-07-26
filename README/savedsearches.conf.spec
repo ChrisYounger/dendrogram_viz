@@ -1,1 +1,11 @@
-display.visualizations.custom.dendrogram_viz.dendrogram_viz.type = <string>
+display.visualizations.custom.dendrogram_viz.dendrogram_viz.layout = <string>
+display.visualizations.custom.dendrogram_viz.dendrogram_viz.tidy = <string>
+display.visualizations.custom.dendrogram_viz.dendrogram_viz.zoom = <string>
+display.visualizations.custom.dendrogram_viz.dendrogram_viz.label_size = <string>
+display.visualizations.custom.dendrogram_viz.dendrogram_viz.node_size = <string>
+display.visualizations.custom.dendrogram_viz.dendrogram_viz.node_sibling_spacing = <string>
+display.visualizations.custom.dendrogram_viz.dendrogram_viz.node_ancestor_spacing = <string>
+display.visualizations.custom.dendrogram_viz.dendrogram_viz.radius = <string>
+display.visualizations.custom.dendrogram_viz.dendrogram_viz.delimiter = <string>
+display.visualizations.custom.dendrogram_viz.dendrogram_viz.max_rows = <string>
+display.visualizations.custom.dendrogram_viz.dendrogram_viz.html = <string>

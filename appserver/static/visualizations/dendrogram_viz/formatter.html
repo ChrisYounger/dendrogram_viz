@@ -15,13 +15,12 @@
                 </splunk-radio-input>
         </splunk-control-group>
 
-        <splunk-control-group label="Allow pan and zoom" help="">
-                <splunk-radio-input name="{{VIZ_NAMESPACE}}.zoom" value="yes">
+        <splunk-control-group label="Allow mouse pan and zoom" help="">
+                <splunk-radio-input name="{{VIZ_NAMESPACE}}.zoom" value="no">
                         <option value="yes">Yes</option>
                         <option value="no">No</option>
                 </splunk-radio-input>
         </splunk-control-group>
-
 
         <splunk-control-group label="Label size" help="">
                 <splunk-text-input name="{{VIZ_NAMESPACE}}.label_size" value="10" style="width:64px; vertical-align:top; display:inline-block; flex:none; margin-right:4px;"></splunk-text-input>
@@ -44,16 +43,19 @@
         </splunk-control-group>
 
         <splunk-control-group label="Path delimiter" help="">
-                <splunk-text-input name="{{VIZ_NAMESPACE}}.delimiter" value="/" ></splunk-text-input>
-        </splunk-control-group>
-
-        <splunk-control-group label="Root node label" help="">
-                <splunk-text-input name="{{VIZ_NAMESPACE}}.root" value="" ></splunk-text-input>
+                <splunk-text-input name="{{VIZ_NAMESPACE}}.delimiter" value="/" style="width:64px; vertical-align:top; display:inline-block; flex:none; margin-right:4px;"></splunk-text-input>
         </splunk-control-group>
 
         <splunk-control-group label="Max rows" help="">
                 <splunk-text-input name="{{VIZ_NAMESPACE}}.max_rows" value="1000" style="width:64px; vertical-align:top; display:inline-block; flex:none; margin-right:4px;"></splunk-text-input>
         </splunk-control-group> 
+
+        <splunk-control-group label="Allow HTML in tooltips" help="">
+                <splunk-radio-input name="{{VIZ_NAMESPACE}}.html" value="no">
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                </splunk-radio-input>
+        </splunk-control-group>
 
 </form>
 

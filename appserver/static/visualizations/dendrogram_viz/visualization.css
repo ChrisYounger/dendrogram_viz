@@ -60,3 +60,7 @@
     color: #818d99;
     line-height: 3;
 }
+.dendrogram_viz-nodes circle,
+.dendrogram_viz-labels text {
+    cursor: pointer;
+}
