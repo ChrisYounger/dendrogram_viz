@@ -1,5 +1,6 @@
 *.pyc
 local/
+!local/data/ui/views/documentation.xml
 metadata/local.meta
 /git/
  
