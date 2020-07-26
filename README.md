@@ -8,4 +8,4 @@ Copyright (C) 2020 Chris Younger | <a href="https://splunkbase.splunk.com/app/51
 
 ![screenshot](https://raw.githubusercontent.com/ChrisYounger/dendrogram_viz/master/appserver/static/demo.png)
 
-For documentation please see the application page on Splunkbase or use the in-product documentation.
+Please see the documentation on the Splunkbase application page or use the in-product documentation.
