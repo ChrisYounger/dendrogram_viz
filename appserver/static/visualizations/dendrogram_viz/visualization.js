@@ -162,10 +162,23 @@ define(["api/SplunkVisualizationBase","api/SplunkVisualizationUtils"], function(
 	                    continue;
 	                }
 	                validRows++;
+	                // Names contains node names, parts contains Ids used in hierarchy construction
 	                var parts = viz.data.results[i].path.split(viz.config.delimiter);
+	                var names = viz.data.results[i].names;
+	                if (names != undefined) {
+	                    names = names.split(viz.config.delimiter);
+	                }
 	                // Remove first element if it is blank
 	                if (parts.length > 0 && parts[0] === "") {
 	                    parts.shift();
+	                }
+	                // Same logic for names and if no names specified, default to using parts
+	                if (names != undefined) {
+	                    if (names.length > 0 && names[0] === "") {
+	                        names.shift();
+	                    }
+	                } else {
+	                    names = parts;
 	                }
 	                
 	                var currentNode = data;
@@ -174,13 +187,14 @@ define(["api/SplunkVisualizationBase","api/SplunkVisualizationUtils"], function(
 	                    if (typeof children === "undefined") {
 	                        children = [];
 	                    }
-	                    var nodeName = parts[j];
+	                    var nodeId = parts[j];
+	                    var nodeName = names[j];
 	                    var childNode;
 	                    if (j + 1 < parts.length) {
 	                        // Not yet at the end of the sequence; move down the tree.
 	                        foundChild = false;
 	                        for (k = 0; k < children.length; k++) {
-	                            if (children[k].name == nodeName) {
+	                            if (children[k].id == nodeId) {
 	                                childNode = children[k];
 	                                foundChild = true;
 	                                break;
@@ -188,14 +202,14 @@ define(["api/SplunkVisualizationBase","api/SplunkVisualizationUtils"], function(
 	                        }
 	                        // If we don't already have a child node for this branch, create it.
 	                        if (!foundChild) {
-	                            childNode = {"name": nodeName, "path": viz.data.results[i].path, "children": []};
+	                            childNode = {"name": nodeName, "path": viz.data.results[i].path, "id": nodeId, "children": []};
 	                            children.push(childNode);
 	                        }
 	                        currentNode = childNode;
 	                    } else {
 	                        foundChild = false;
 	                        for (k = 0; k < children.length; k++) {
-	                            if (children[k].name == nodeName) {
+	                            if (children[k].id == nodeId) {
 	                                childNode = children[k];
 	                                foundChild = true;
 	                                break;
@@ -203,7 +217,7 @@ define(["api/SplunkVisualizationBase","api/SplunkVisualizationUtils"], function(
 	                        }
 	                        if (!foundChild) {
 	                            // Reached the end of the sequence; create a leaf node.
-	                            childNode = {"name": nodeName, "path": viz.data.results[i].path, "children": []};
+	                            childNode = {"name": nodeName, "path": viz.data.results[i].path, "id": nodeId, "children": []};
 	                            children.push(childNode);
 	                        }
 	                        if (viz.data.results[i].hasOwnProperty("color")) {
@@ -274,6 +288,9 @@ define(["api/SplunkVisualizationBase","api/SplunkVisualizationUtils"], function(
 	                };
 	                if (d.data.hasOwnProperty("path") && d.data.path){
 	                    tokens.path = d.data.path;
+	                }
+	                if (d.data.hasOwnProperty("id") && d.data.id){
+	                    tokens.id = d.data.id;
 	                }
 	                if (d.data.hasOwnProperty("drilldown") && d.data.drilldown){
 	                    tokens.drilldown = d.data.drilldown;
