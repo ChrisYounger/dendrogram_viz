@@ -286,8 +286,23 @@ define(["api/SplunkVisualizationBase","api/SplunkVisualizationUtils"], function(
 	                var tokens = {
 	                    name: d.data.name
 	                };
+	                var path = [];
+	                path.unshift(d.data.name);
+	                path.unshift(viz.config.delimiter);
+	                var ref = d;
+	                while (true) {
+	                    if (ref.hasOwnProperty("depth") && ref.depth > 1){
+	                        ref = ref.parent;
+	                        path.unshift(ref.data.name);
+	                        path.unshift(viz.config.delimiter);
+	                    } else {
+	                        break;
+	                    }
+	                }
+	                // Remove the first delimiter
+	                path.shift();
 	                if (d.data.hasOwnProperty("path") && d.data.path){
-	                    tokens.path = d.data.path;
+	                   tokens.path = path.join(""); // Old incorrect method: d.data.path;
 	                }
 	                if (d.data.hasOwnProperty("id") && d.data.id){
 	                    tokens.id = d.data.id;
