@@ -28,6 +28,7 @@
     <li><code>color</code> - a HTML color code or hex value to use for coloring the node</li>
     <li><code>drilldown</code> - when a user clicks a node, the contents of this drilldown field will be set in a token called <code>$dendrogram_viz_drilldown$</code>. See token section below.</li>
     <li><code>tooltip</code> - content to show on the tooltip when a user hovers the node</li>
+    <li><code>names</code> - can be used to change node names. Should be the same 'depth' as the path.</li>
   </ul>
 </p>
 
@@ -41,7 +42,7 @@
 <br/><br/>
 
 <h2>Tokens</h2>
-When clicking a node, the following tokens will be set: <code>$dendrogram_viz_path$</code>, <code>$dendrogram_viz_name$</code> and <code>$dendrogram_viz_drilldown$</code> (if drilldown column is provided in the data).  Hit F12 to open the browser console, to see what tokens are being set.
+When clicking a node, the following tokens will be set: <code>$dendrogram_viz_path$</code>, <code>$dendrogram_viz_name$</code> (see 'names' above), <code>$dendrogram_viz_id$</code> and <code>$dendrogram_viz_drilldown$</code> (if drilldown column is provided in the data).  Hit F12 to open the browser console, to see what tokens are being set.
 <br/>
 <br/>
 <br/>
