@@ -29,16 +29,6 @@ function(
             SplunkVisualizationBase.prototype.initialize.apply(this, arguments);
             var viz = this;
             viz.instance_id = "dendrogram_viz_" + Math.round(Math.random() * 1000000);
-            var theme = 'light'; 
-            if (typeof vizUtils.getCurrentTheme === "function") {
-                theme = vizUtils.getCurrentTheme();
-            }
-            viz.text_color = "white";
-            viz.shadow_color = "#171d21";
-            if (theme === "light") {
-                viz.text_color = "#171d21";
-                viz.shadow_color = "white";
-            }
             viz.$container_wrap = $(viz.el);
             viz.$container_wrap.addClass("dendrogram_viz-container");
         },
@@ -60,13 +50,29 @@ function(
                 radius: "300",
                 zoom: "no",
                 delimiter: "/",
-                html: "no"
+                html: "no",
+                color1: "#171d21",
+                color2: "#ffffff",
+                nodecolor: "#999999",
+                linkcolor: "#555555"
             };
+            
             // Override defaults with selected items from the UI
             for (var opt in config) {
                 if (config.hasOwnProperty(opt)) {
                     viz.config[ opt.replace(viz.getPropertyNamespaceInfo().propertyNamespace,'') ] = config[opt];
                 }
+            }
+            var theme = 'light'; 
+            if (typeof vizUtils.getCurrentTheme === "function") {
+                theme = vizUtils.getCurrentTheme();
+            }
+            if (theme === "light") {
+                viz.text_color = viz.config.color1;
+                viz.shadow_color = viz.config.color2;
+            } else {
+                viz.text_color = viz.config.color2;
+                viz.shadow_color = viz.config.color1;
             }
             viz.data = data;
             viz.scheduleDraw();
@@ -318,7 +324,7 @@ function(
             svg_canvas.append("g")
                 .attr("class","dendrogram_viz-links")
                 .attr("fill", "none")
-                .attr("stroke", "#555")
+                .attr("stroke", viz.config.linkcolor)
                 .attr("stroke-opacity", 0.4)
                 .attr("stroke-width", 1.5)
                 .selectAll("path")
@@ -359,8 +365,8 @@ function(
                         return "rotate(" + (d.x * 180 / Math.PI - 90) + ") translate(" + d.y + ",0)";
                     }
                 })
-                .attr("stroke", function(d) { return d.data.hasOwnProperty("color") ? tinycolor(d.data.color).darken(20).toString() : "#777"; })
-                .attr("fill", function(d) { return d.data.hasOwnProperty("color") ? d.data.color : "#999"; })
+                .attr("stroke", function(d) { return d.data.hasOwnProperty("color") ? tinycolor(d.data.color).darken(20).toString() : tinycolor(viz.config.nodecolor).darken(20).toString(); })
+                .attr("fill", function(d) { return d.data.hasOwnProperty("color") ? d.data.color : viz.config.nodecolor; })
                 .attr("r", Number(viz.config.node_size))
                 .on("mouseover", function(d) { tooltipCreate(d); })
                 .on("mousemove", function() { tooltipMove(event); })

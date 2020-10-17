@@ -9,3 +9,7 @@ display.visualizations.custom.dendrogram_viz.dendrogram_viz.radius = <string>
 display.visualizations.custom.dendrogram_viz.dendrogram_viz.delimiter = <string>
 display.visualizations.custom.dendrogram_viz.dendrogram_viz.max_rows = <string>
 display.visualizations.custom.dendrogram_viz.dendrogram_viz.html = <string>
+display.visualizations.custom.dendrogram_viz.dendrogram_viz.color1 = <string>
+display.visualizations.custom.dendrogram_viz.dendrogram_viz.color2 = <string>
+display.visualizations.custom.dendrogram_viz.dendrogram_viz.nodecolor = <string>
+display.visualizations.custom.dendrogram_viz.dendrogram_viz.linkcolor = <string>
