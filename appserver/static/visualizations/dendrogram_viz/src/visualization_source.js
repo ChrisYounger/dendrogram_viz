@@ -198,7 +198,7 @@ function(
                 console.log("Rows skipped because missing path field: ", skippedRows);
             }
             if (skippedRows && ! validRows) {
-                viz.$container_wrap.empty().append("<div class='dendrogram_viz-bad_data'>Invalid Data, there should be a column called 'path' (delimited by '/' by default).</div>");
+                viz.$container_wrap.empty().append("<div class='dendrogram_viz-bad_data'>Invalid Data, there should be a column called 'path' (delimited by '/' by default).<br /><a href='/app/dendrogram_viz/documentation' target='_blank'>Examples and Documentation</a></div>");
                 return;
             }
             if (validRows > Number(viz.config.max_rows)) {
