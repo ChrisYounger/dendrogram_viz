@@ -1,4 +1,4 @@
-<form theme="light" hideAppBar="true">
+<form version="1.1" theme="light" hideAppBar="true">
   <label>Dendrogram Viz - Documentation</label>
   <fieldset submitButton="false"></fieldset>
   <row>
