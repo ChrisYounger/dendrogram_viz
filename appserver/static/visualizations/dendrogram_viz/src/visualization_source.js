@@ -116,86 +116,140 @@ function(
             var skippedRows = 0;
             var validRows = 0;
             var data = {"name": "", "children": []};
-            var i, k, foundChild;
+            var top_level_nodes = [], all_parents = {}, all_children = {};
+            var i, k, foundChild,childNode,parentNode;
+
             for (i = 0; i < viz.data.results.length; i++) {
-                if (! viz.data.results[i].path) {
-                    skippedRows++;
-                    continue;
-                }
-                validRows++;
-                // Names contains node names, parts contains Ids used in hierarchy construction
-                var parts = viz.data.results[i].path.split(viz.config.delimiter);
-                var names = viz.data.results[i].names;
-                if (names != undefined) {
-                    names = names.split(viz.config.delimiter);
-                }
-                // Remove first element if it is blank
-                if (parts.length > 0 && parts[0] === "") {
-                    parts.shift();
-                }
-                // Same logic for names and if no names specified, default to using parts
-                if (names != undefined) {
-                    if (names.length > 0 && names[0] === "") {
-                        names.shift();
+                if (viz.data.results[i].path) {
+                    validRows++;
+                    // Names contains node names, parts contains Ids used in hierarchy construction
+                    var parts = viz.data.results[i].path.split(viz.config.delimiter);
+                    var names = viz.data.results[i].names;
+                    if (names != undefined) {
+                        names = names.split(viz.config.delimiter);
                     }
-                } else {
-                    names = parts;
-                }
-                
-                var currentNode = data;
-                for (var j = 0; j < parts.length; j++) {
-                    var children = currentNode.children;
-                    if (typeof children === "undefined") {
-                        children = [];
+                    // Remove first element if it is blank
+                    if (parts.length > 0 && parts[0] === "") {
+                        parts.shift();
                     }
-                    var nodeId = parts[j];
-                    var nodeName = names[j];
-                    var childNode;
-                    if (j + 1 < parts.length) {
-                        // Not yet at the end of the sequence; move down the tree.
-                        foundChild = false;
-                        for (k = 0; k < children.length; k++) {
-                            if (children[k].id == nodeId) {
-                                childNode = children[k];
-                                foundChild = true;
-                                break;
-                            }
+                    // Same logic for names and if no names specified, default to using parts
+                    if (names != undefined) {
+                        if (names.length > 0 && names[0] === "") {
+                            names.shift();
                         }
-                        // If we don't already have a child node for this branch, create it.
-                        if (!foundChild) {
-                            childNode = {"name": nodeName, "path": viz.data.results[i].path, "id": nodeId, "children": []};
-                            children.push(childNode);
-                        }
-                        currentNode = childNode;
                     } else {
-                        foundChild = false;
-                        for (k = 0; k < children.length; k++) {
-                            if (children[k].id == nodeId) {
-                                childNode = children[k];
-                                foundChild = true;
-                                break;
+                        names = parts;
+                    }
+                    
+                    var currentNode = data;
+                    for (var j = 0; j < parts.length; j++) {
+                        var children = currentNode.children;
+                        if (typeof children === "undefined") {
+                            children = [];
+                        }
+                        var nodeId = parts[j];
+                        var nodeName = names[j];
+                        if (j + 1 < parts.length) {
+                            // Not yet at the end of the sequence; move down the tree.
+                            foundChild = false;
+                            for (k = 0; k < children.length; k++) {
+                                if (children[k].id == nodeId) {
+                                    childNode = children[k];
+                                    foundChild = true;
+                                    break;
+                                }
+                            }
+                            // If we don't already have a child node for this branch, create it.
+                            if (!foundChild) {
+                                childNode = {"name": nodeName, "id": nodeId, "children": []};
+                                children.push(childNode);
+                            }
+                            currentNode = childNode;
+                        } else {
+                            foundChild = false;
+                            for (k = 0; k < children.length; k++) {
+                                if (children[k].id == nodeId) {
+                                    childNode = children[k];
+                                    foundChild = true;
+                                    break;
+                                }
+                            }
+                            if (!foundChild) {
+                                // Reached the end of the sequence; create a leaf node.
+                                childNode = {"name": nodeName, "id": nodeId, "children": []};
+                                children.push(childNode);
+                            }
+                            if (viz.data.results[i].hasOwnProperty("color")) {
+                                childNode.color = viz.data.results[i].color;
+                            }
+                            if (viz.data.results[i].hasOwnProperty("tooltip")) {
+                                childNode.tooltip = viz.data.results[i].tooltip;
+                            }
+                            if (viz.data.results[i].hasOwnProperty("drilldown")) {
+                                childNode.drilldown = viz.data.results[i].drilldown;
                             }
                         }
-                        if (!foundChild) {
-                            // Reached the end of the sequence; create a leaf node.
-                            childNode = {"name": nodeName, "path": viz.data.results[i].path, "id": nodeId, "children": []};
-                            children.push(childNode);
+                    }
+                } else if (viz.data.results[i].child) {
+                    validRows++;
+
+                    if (viz.data.results[i].hasOwnProperty("parent") && viz.data.results[i].parent !== viz.data.results[i].child) {
+                        if (! all_parents.hasOwnProperty(viz.data.results[i].parent)) {
+                            all_parents[viz.data.results[i].parent] = [];
                         }
-                        if (viz.data.results[i].hasOwnProperty("color")) {
-                            childNode.color = viz.data.results[i].color;
+                        all_parents[viz.data.results[i].parent].push(viz.data.results[i]);
+                    } else {
+                        top_level_nodes.push(viz.data.results[i]);
+                    }
+                    all_children[viz.data.results[i].child] = i;
+
+                } else {
+                    skippedRows++;
+                }
+            }
+
+            for (var parent in all_parents){
+                // a parent that is not a child must be a top level item
+                if (all_parents.hasOwnProperty(parent) && ! all_children.hasOwnProperty(parent)) {
+                    top_level_nodes.push( parent );
+                }
+            }
+
+            recursiveBuild(data, top_level_nodes);
+
+            function recursiveBuild(insert_point, nodes) {
+                for (var i = 0; i < nodes.length; i++) {
+                    // if its not an object, it means its a parent of a child node, but we never saw the child node for it
+                    if (typeof nodes[i] !== "object") {
+                        childNode = {"name": nodes[i], "id": nodes[i], "children": []};
+                    } else {
+                        childNode = {"id": nodes[i].child, "children": []};
+                        if (nodes[i].hasOwnProperty("name")) {
+                            childNode.name = nodes[i].name;
+                        } else {
+                            childNode.name = nodes[i].child;
                         }
-                        if (viz.data.results[i].hasOwnProperty("tooltip")) {
-                            childNode.tooltip = viz.data.results[i].tooltip;
+                        if (nodes[i].hasOwnProperty("color")) {
+                            childNode.color = nodes[i].color;
                         }
-                        if (viz.data.results[i].hasOwnProperty("drilldown")) {
-                            childNode.drilldown = viz.data.results[i].drilldown;
+                        if (nodes[i].hasOwnProperty("tooltip")) {
+                            childNode.tooltip = nodes[i].tooltip;
                         }
+                        if (nodes[i].hasOwnProperty("drilldown")) {
+                            childNode.drilldown = nodes[i].drilldown;
+                        }
+                    }
+                    insert_point.children.push(childNode);
+                    if (all_parents.hasOwnProperty(childNode.id)) {
+                        recursiveBuild(childNode, all_parents[childNode.id]);
                     }
                 }
             }
 
+            //console.log("data now looks like this", data);
+
             if (skippedRows) {
-                console.log("Rows skipped because missing path field: ", skippedRows);
+                console.log("Rows skipped because missing path or child field: ", skippedRows);
             }
             if (skippedRows && ! validRows) {
                 viz.$container_wrap.empty().append("<div class='dendrogram_viz-bad_data'>Invalid Data, there should be a column called 'path' (delimited by '/' by default).<br /><a href='/app/dendrogram_viz/documentation' target='_blank'>Examples and Documentation</a></div>");
@@ -207,7 +261,7 @@ function(
             }
 
             function tooltipCreate(d) {
-                var parts = d.ancestors().map(function(d) { return d.data.name; }).reverse();
+                var parts = d.ancestors().map(function(d) { if(d.data.name === d.data.id) {return d.data.name;} else { return d.data.name + " (" + d.data.id + ")"; }  }).reverse();
                 // if root node, then no tooltips
                 if (parts.length === 1) {
                     return;
@@ -245,16 +299,17 @@ function(
 
             function nodeClick(d) {
                 var tokens = {
-                    name: d.data.name
+                    name: d.data.name,
+                    id: d.data.id,
                 };
                 var path = [];
-                path.unshift(d.data.name);
+                path.unshift(d.data.id);
                 path.unshift(viz.config.delimiter);
                 var ref = d;
                 while (true) {
                     if (ref.hasOwnProperty("depth") && ref.depth > 1){
                         ref = ref.parent;
-                        path.unshift(ref.data.name);
+                        path.unshift(ref.data.id);
                         path.unshift(viz.config.delimiter);
                     } else {
                         break;
@@ -262,12 +317,7 @@ function(
                 }
                 // Remove the first delimiter
                 path.shift();
-                if (d.data.hasOwnProperty("path") && d.data.path){
-                   tokens.path = path.join(""); // Old incorrect method: d.data.path;
-                }
-                if (d.data.hasOwnProperty("id") && d.data.id){
-                    tokens.id = d.data.id;
-                }
+                tokens.path = path.join(""); // Old incorrect method: d.data.path;
                 if (d.data.hasOwnProperty("drilldown") && d.data.drilldown){
                     tokens.drilldown = d.data.drilldown;
                 }

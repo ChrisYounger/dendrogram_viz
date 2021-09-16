@@ -11,7 +11,8 @@
 </style>
 <div style="max-width: 1200px; margin: 0 auto;">
 <p>Configurable dendrogram visualization built using D3. Supports dark-mode, and can layout horizontally, vertically or as a radial dendogram. These charts are useful to display hierarchical data.</p>
-<br/><br/>
+<br/>
+          <br/>
 <p>Copyright (C) 2020 Chris Younger |
 <a href="https://github.com/ChrisYounger/dendrogram_viz">Source code</a> | <a href="https://splunkbase.splunk.com/app/5153/">Splunkbase</a> | <a href="https://answers.splunk.com/app/questions/5153.html">Questions, Bugs or Suggestions</a> | <a href="https://splunkbase.splunk.com/apps/#/author/chrisyoungerjds">My Splunk apps</a>
 </p>
@@ -21,14 +22,25 @@
 <br/>
 
 <h2>Usage</h2>
-<p>This visualisation expects a table of data, with one column called "path". Additional optional columns are listed below.</p>
+<p>This visualisation expects a table of data with specific field names. There are two main data formats, one with a column called "path" or a second format with fields "child" and "parent". Additional optional columns are listed below.</p>
 <p>
   <ul>
-    <li><code>path</code> - this column/field should can be forward-slash delimited, but you can change the delimiter in the formatting options.</li>
-    <li><code>color</code> - a HTML color code or hex value to use for coloring the node</li>
-    <li><code>drilldown</code> - when a user clicks a node, the contents of this drilldown field will be set in a token called <code>$dendrogram_viz_drilldown$</code>. See token section below.</li>
-    <li><code>tooltip</code> - content to show on the tooltip when a user hovers the node</li>
-    <li><code>names</code> - can be used to change node names. Should be the same 'depth' as the path.</li>
+    <li>
+                <code>path</code> - this column/field should be forward-slash delimited, but you can change the delimiter in the formatting options.</li>
+    <li>
+                <code>parent</code> - this column/field is a unique name for this node's parent. it is optional.</li>
+    <li>
+                <code>child</code> - this column/field is a unique name for the node.</li>
+    <li>
+                <code>color</code> - a HTML color code or hex value to use for coloring the node</li>
+    <li>
+                <code>drilldown</code> - when a user clicks a node, the contents of this drilldown field will be set in a token called <code>$dendrogram_viz_drilldown$</code>. See token section below.</li>
+    <li>
+                <code>tooltip</code> - content to show on the tooltip when a user hovers the node</li>
+    <li>
+                <code>names</code> - can be used to change node names. Only for the "path" data format. Should be the same 'depth' as the path.</li>
+    <li>
+                <code>name</code> - can be used to change node name. Only for the "child/parent" data format. Applies to the "child" node.</li>
   </ul>
 </p>
 
@@ -37,9 +49,14 @@
 <code>index=web | stats count by uri_path | rename uri_path as path</code>
 </pre>
 <br/>
-<p>Here is an example of how the data should look</p>
+<p>Here is an example of how the "path" data format should look</p>
 <img src="/static/app/dendrogram_viz/table.png"/>
-<br/><br/>
+<br/>
+          <br/>
+<p>Here is an example of how the "child/parent" data format should look</p>
+<img src="/static/app/dendrogram_viz/data_format.png"/>
+<br/>
+          <br/>
 
 <h2>Tokens</h2>
 When clicking a node, the following tokens will be set: <code>$dendrogram_viz_path$</code>, <code>$dendrogram_viz_name$</code> (see 'names' above), <code>$dendrogram_viz_id$</code> and <code>$dendrogram_viz_drilldown$</code> (if drilldown column is provided in the data).  Hit F12 to open the browser console, to see what tokens are being set.
@@ -292,6 +309,53 @@ path=\"splunkd/SearchParser\" color=\"#b22b32\""
         <option name="trellis.scales.shared">1</option>
         <option name="trellis.size">medium</option>
       </viz>
+      <viz type="dendrogram_viz.dendrogram_viz">
+        <title>Example using child/parent data format</title>
+        <search>
+          <query>| makeresults   
+| eval raw = "
+child=\"My Company\" color=\"blue\" ###
+parent=\"My Company\" child=\"Platform\" color=\"#d16f18\" ###
+parent=\"Platform\" child=\"LDAP\" color=\"#1a9035\" ###
+parent=\"Platform\" child=\"DNS\" color=\"#1a9035\" ###
+parent=\"Platform\" child=\"Network\" color=\"#b22b32\" ###
+parent=\"My Company\" child=\"Business Services\" color=\"#1a9035\" ###
+parent=\"Business Services\" child=\"Finance\" color=\"#1a9035\" ###
+parent=\"Finance\" child=\"SAP\" color=\"#1a9035\" tooltip=\"Trevor is in charge of SAP. &lt;strong&gt;DO NOT CHANGE&lt;/strong&gt;\" ###
+parent=\"Finance\" child=\"Documents\" color=\"#1a9035\" ###
+parent=\"Business Services\" child=\"Sales\" color=\"#1a9035\" ###
+parent=\"Business Services\" child=\"John\" name=\"Global IT\" color=\"#1a9035\" ###
+"
+| makemv delim="###" raw
+| mvexpand raw 
+| rename raw  as  _raw 
+| extract 
+| search child=*
+| table parent child color name tooltip</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="dendrogram_viz.dendrogram_viz.color1">#171d21</option>
+        <option name="dendrogram_viz.dendrogram_viz.color2">#ffffff</option>
+        <option name="dendrogram_viz.dendrogram_viz.delimiter">/</option>
+        <option name="dendrogram_viz.dendrogram_viz.html">yes</option>
+        <option name="dendrogram_viz.dendrogram_viz.label_size">10</option>
+        <option name="dendrogram_viz.dendrogram_viz.layout">horizontal</option>
+        <option name="dendrogram_viz.dendrogram_viz.linkcolor">#555555</option>
+        <option name="dendrogram_viz.dendrogram_viz.max_rows">1000</option>
+        <option name="dendrogram_viz.dendrogram_viz.node_ancestor_spacing">100</option>
+        <option name="dendrogram_viz.dendrogram_viz.node_sibling_spacing">30</option>
+        <option name="dendrogram_viz.dendrogram_viz.node_size">4</option>
+        <option name="dendrogram_viz.dendrogram_viz.nodecolor">#999999</option>
+        <option name="dendrogram_viz.dendrogram_viz.radius">300</option>
+        <option name="dendrogram_viz.dendrogram_viz.tidy">yes</option>
+        <option name="dendrogram_viz.dendrogram_viz.zoom">no</option>
+        <option name="drilldown">none</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </viz>      
     </panel>
   </row>
 </form>
