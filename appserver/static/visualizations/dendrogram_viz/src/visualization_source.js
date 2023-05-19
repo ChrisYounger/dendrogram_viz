@@ -323,9 +323,12 @@ function(
                 }
                 var defaultTokenModel = splunkjs.mvc.Components.get('default');
                 var submittedTokenModel = splunkjs.mvc.Components.get('submitted');
+                var drilldown_obj = {};
                 for (var item in tokens) {
                     if (tokens.hasOwnProperty(item)) {
-                        console.log("Setting token $dendrogram_viz_" +  item + "$ to \"" + tokens[item] + "\"");
+                        var tokenName = "dendrogram_viz_" + item;
+                        console.log("Setting token $" +  tokenName + "$ to \"" + tokens[item] + "\"");
+                        drilldown_obj[tokenName] = tokens[item];
                         if (defaultTokenModel) {
                             defaultTokenModel.set("dendrogram_viz_" + item, tokens[item]);
                         } 
@@ -334,6 +337,10 @@ function(
                         }
                     }
                 }
+                viz.drilldown({
+                    action: SplunkVisualizationBase.FIELD_VALUE_DRILLDOWN,
+                    data: drilldown_obj
+                }, event);
             }
 
             var width = viz.$container_wrap.width() - 20;
