@@ -47,6 +47,7 @@ function(
                 node_ancestor_spacing: "100",
                 label_size: "10",
                 node_size: "4",
+                link_size: "1",
                 radius: "300",
                 zoom: "no",
                 delimiter: "/",
@@ -383,7 +384,7 @@ function(
                 .attr("fill", "none")
                 .attr("stroke", viz.config.linkcolor)
                 .attr("stroke-opacity", 0.4)
-                .attr("stroke-width", 1.5)
+                .attr("stroke-width", 1.5 * Number(viz.config.link_size))
                 .selectAll("path")
                 .data(data_links)
                 .join("path")

@@ -13,3 +13,4 @@ display.visualizations.custom.dendrogram_viz.dendrogram_viz.color1 = <string>
 display.visualizations.custom.dendrogram_viz.dendrogram_viz.color2 = <string>
 display.visualizations.custom.dendrogram_viz.dendrogram_viz.nodecolor = <string>
 display.visualizations.custom.dendrogram_viz.dendrogram_viz.linkcolor = <string>
+display.visualizations.custom.dendrogram_viz.dendrogram_viz.link_size = <string>
